@@ -1,0 +1,3 @@
+// To shorten a long URL, we should implement a hash function that hashes a long URL to a 7 char string
+// Example of hash functions are CRC32, MD5, or SHA-1. However, the hash results of these functions are longer than 7
+// Approach to make the hash function to 7 digits: take the first 7 digits => check if exists in DB => if yes, longURL append with predefined string like "added_string", then hash again and repeat the process
