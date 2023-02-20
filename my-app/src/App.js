@@ -6,8 +6,12 @@ function App() {
   return (
     <div className="App">
       <header className="App-header">
-        <LongUrlInput />
-        <ShortUrlInput />
+        <div className="Div-input">
+          <LongUrlInput />
+        </div>
+        <div className="Div-input">
+          <ShortUrlInput />
+        </div>
       </header>
     </div>
   );

@@ -3,23 +3,29 @@ const crypto = require("crypto");
 const { getShortURL, saveShortURL, getLongURL } = require("./sql-operation");
 const mysql = require("mysql");
 
-const myServerDomain = "https://myserver/";
+const {
+  dbUserName,
+  dbPassword,
+  serverPort,
+  myServerDomain,
+} = require("./config");
+
 const app = express();
 app.use(express.json());
 
 var con = mysql.createConnection({
   host: "localhost",
-  user: "root",
-  password: "password",
+  user: dbUserName,
+  password: dbPassword,
   database: "url_shortener",
 });
 
-con.connect(function (err) {
+con.connect((err) => {
   if (err) throw err;
   console.log("Connected!");
 });
 
-app.use(function (req, res, next) {
+app.use((req, res, next) => {
   res.setHeader("Access-Control-Allow-Origin", "http://localhost:3000");
   res.setHeader(
     "Access-Control-Allow-Methods",
@@ -40,7 +46,6 @@ app.options("/*", (_, res) => {
 //Use SQL to persist the data
 //returns a short URL when given a long URL API
 app.post("/api/get_short_url", async (req, res) => {
-  console.log(res.header);
   const { longURL } = req.body;
   if (longURL) {
     var hash = "";
@@ -79,7 +84,7 @@ app.post("/api/get_long_url", async (req, res) => {
     if (dbURL == "") {
       res.status(200).json({
         success: false,
-        longURLs: "original url for the short url not found",
+        msg: "original url for the short url not found",
       });
     } else {
       res.status(200).json({ success: true, longURL: dbURL });
@@ -95,6 +100,6 @@ app.use((req, res) => {
   res.status(404).json({ success: false, msg: `invalid action` });
 });
 
-app.listen(3001, () => {
-  console.log("server is listening on port 3001...");
+app.listen(serverPort, () => {
+  console.log(`server is listening on port ${serverPort}...`);
 });

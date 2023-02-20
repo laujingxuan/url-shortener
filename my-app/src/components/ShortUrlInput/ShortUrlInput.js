@@ -1,30 +1,48 @@
 import { useState } from "react";
+import validator from "validator";
 import URLService from "../../services/URLService";
+import Modal from "../Modal/Modal";
 
 const ShortUrlInput = () => {
   const [longURL, setLongURL] = useState("");
   const [shortURL, setShortURL] = useState("");
+  const [modal, setModal] = useState({
+    isModalOpen: false,
+    modalContent: "",
+  });
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    console.log(shortURL.length);
-    if (shortURL.length === 24) {
+    if (shortURL && validator.isURL(shortURL)) {
       URLService.fetchLongURL(shortURL)
         .then((response) => {
           console.log(response);
-          if (response.status === 200) {
+          if (response.status === 200 && response.data.success === true) {
             console.log(response.data);
             setLongURL(response.data.longURL);
           } else {
-            console.log("Request with error");
+            setModal({
+              ...modal,
+              isModalOpen: true,
+              modalContent: `Error: ${response.data.msg}`,
+            });
           }
         })
         .catch((e) => {
           console.log(e);
         });
     } else {
-      console.log("Invalid URL");
+      setLongURL("");
+      setModal({
+        ...modal,
+        isModalOpen: true,
+        modalContent: `Invalid URL`,
+      });
     }
+  };
+
+  const closeModal = () => {
+    setModal({ ...modal, isModalOpen: false });
   };
 
   return (
@@ -41,10 +59,15 @@ const ShortUrlInput = () => {
           />
           <p>{longURL}</p>
         </div>
-        <div className="form-actions">
-          <button type="submit">Convert</button>
-        </div>
+        <button class="button-23" type="submit">
+          Convert
+        </button>
       </form>
+      <div>
+        {modal.isModalOpen && (
+          <Modal closeModal={closeModal} modalContent={modal.modalContent} />
+        )}
+      </div>
     </>
   );
 };

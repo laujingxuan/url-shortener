@@ -1,0 +1,6 @@
+module.exports = {
+  dbUserName: "root",
+  dbPassword: "password",
+  serverPort: 3001,
+  myServerDomain: "https://myserver/",
+};
