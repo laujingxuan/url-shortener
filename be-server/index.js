@@ -1,10 +1,11 @@
-// To shorten a long URL, we should implement a hash function that hashes a long URL to a 7 char string
-// Example of hash functions are CRC32, MD5, or SHA-1. However, the hash results of these functions are longer than 7
-// Approach to make the hash function to 7 digits: take the first 7 digits => check if exists in DB => if yes, longURL append with predefined string like "added_string", then hash again and repeat the process
 const express = require("express");
 const crypto = require("crypto");
 const { getShortURL, saveShortURL, getLongURL } = require("./sql-operation");
 const mysql = require("mysql");
+
+const myServerDomain = "https://myserver/";
+const app = express();
+app.use(express.json());
 
 var con = mysql.createConnection({
   host: "localhost",
@@ -18,11 +19,8 @@ con.connect(function (err) {
   console.log("Connected!");
 });
 
-const app = express();
-app.use(express.json());
-
-app.use((req, res, next) => {
-  res.setHeader("Access-Control-Allow-Origin", "http://localhost:8888");
+app.use(function (req, res, next) {
+  res.setHeader("Access-Control-Allow-Origin", "http://localhost:3000");
   res.setHeader(
     "Access-Control-Allow-Methods",
     "GET, POST, OPTIONS, PUT, PATCH, DELETE"
@@ -35,9 +33,14 @@ app.use((req, res, next) => {
   next();
 });
 
+app.options("/*", (_, res) => {
+  res.sendStatus(200);
+});
+
 //Use SQL to persist the data
 //returns a short URL when given a long URL API
 app.post("/api/get_short_url", async (req, res) => {
+  console.log(res.header);
   const { longURL } = req.body;
   if (longURL) {
     var hash = "";
@@ -58,7 +61,7 @@ app.post("/api/get_short_url", async (req, res) => {
       }
       saveShortURL(con, longURL, hash);
     }
-    res.status(200).json({ success: true, shortURL: hash });
+    res.status(200).json({ success: true, shortURL: myServerDomain + hash });
   } else {
     //400 stands for bad request
     res
@@ -71,14 +74,15 @@ app.post("/api/get_short_url", async (req, res) => {
 app.post("/api/get_long_url", async (req, res) => {
   const { shortURL } = req.body;
   if (shortURL) {
-    dbURL = await getLongURL(con, shortURL);
+    hashedCode = shortURL.slice(-7);
+    dbURL = await getLongURL(con, hashedCode);
     if (dbURL == "") {
       res.status(200).json({
         success: false,
         longURLs: "original url for the short url not found",
       });
     } else {
-      res.status(200).json({ success: true, longURLs: dbURL });
+      res.status(200).json({ success: true, longURL: dbURL });
     }
   } else {
     res
