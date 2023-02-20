@@ -68,8 +68,23 @@ app.post("/api/get_short_url", async (req, res) => {
 });
 
 //returns the long URL when given short URL API
-app.post("/api/get_long_url", (req, res) => {
-  res.status(200).json({ success: true, longURLs: "temp" });
+app.post("/api/get_long_url", async (req, res) => {
+  const { shortURL } = req.body;
+  if (shortURL) {
+    dbURL = await getLongURL(con, shortURL);
+    if (dbURL == "") {
+      res.status(200).json({
+        success: false,
+        longURLs: "original url for the short url not found",
+      });
+    } else {
+      res.status(200).json({ success: true, longURLs: dbURL });
+    }
+  } else {
+    res
+      .status(400)
+      .json({ success: false, msg: "Please provide the shortURL field" });
+  }
 });
 
 app.use((req, res) => {
