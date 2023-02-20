@@ -91,6 +91,6 @@ app.use((req, res) => {
   res.status(404).json({ success: false, msg: `invalid action` });
 });
 
-app.listen(3000, () => {
-  console.log("server is listening on port 3000...");
+app.listen(3001, () => {
+  console.log("server is listening on port 3001...");
 });
