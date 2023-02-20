@@ -16,9 +16,7 @@ const ShortUrlInput = () => {
     if (shortURL && validator.isURL(shortURL)) {
       URLService.fetchLongURL(shortURL)
         .then((response) => {
-          console.log(response);
           if (response.status === 200 && response.data.success === true) {
-            console.log(response.data);
             setLongURL(response.data.longURL);
           } else {
             setModal({
@@ -29,7 +27,11 @@ const ShortUrlInput = () => {
           }
         })
         .catch((e) => {
-          console.log(e);
+          setModal({
+            ...modal,
+            isModalOpen: true,
+            modalContent: `Error: ${e}`,
+          });
         });
     } else {
       setLongURL("");

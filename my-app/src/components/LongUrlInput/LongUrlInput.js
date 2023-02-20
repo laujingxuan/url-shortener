@@ -27,7 +27,11 @@ const LongUrlInput = () => {
           }
         })
         .catch((e) => {
-          console.log(e);
+          setModal({
+            ...modal,
+            isModalOpen: true,
+            modalContent: `Error: ${e}`,
+          });
         });
     } else {
       setShortURL("");
