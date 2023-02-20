@@ -78,7 +78,6 @@ app.post("/api/get_short_url", async (req, res) => {
 //returns the long URL when given short URL API
 app.post("/api/get_long_url", async (req, res) => {
   const { shortURL } = req.body;
-  console.log(req.body)
   if (shortURL) {
     hashedCode = shortURL.slice(-7);
     dbURL = await getLongURL(con, hashedCode);

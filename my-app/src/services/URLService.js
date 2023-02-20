@@ -1,6 +1,6 @@
 import axios from "axios";
 
-const URL_SHORTENER_SERVICE = "http://localhost:3001/api/";
+const { URL_SHORTENER_SERVICE } = require('../config')
 
 class URLService {
   fetchShortURL(url) {
