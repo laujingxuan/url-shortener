@@ -1,0 +1,3 @@
+module.exports = {
+    URL_SHORTENER_SERVICE: "http://localhost:3001/api/",
+};

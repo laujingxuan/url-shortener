@@ -61,7 +61,7 @@ const LongUrlInput = () => {
           />
           <p>{shortURL}</p>
         </div>
-        <button class="button-23" type="submit">
+        <button className="button-23" type="submit">
           Convert
         </button>
       </form>
